@@ -1,2 +1,2 @@
 # Embedded-Control-
-This is a Repo for Control Team 
+Official Repo for the CURT23 Embedded Control Team.
