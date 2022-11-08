@@ -1,0 +1,11 @@
+EVMS2.c:10:6:EVMS2_init	16	static
+EVMS2.c:16:10:ADC_uint16ReadBrakes	0	static
+EVMS2.c:26:9:LOGIC_uint8CheckIMD	16	static
+EVMS2.c:36:9:LOGIC_uint8CheckBMS	8	static
+EVMS2.c:45:9:LOGIC_uint8CheckBSPD	16	static
+EVMS2.c:54:9:isError	8	static
+EVMS2.c:67:6:LOGIC_voidControlFan	8	static
+EVMS2.c:79:6:LOGIC_voidControlPump	8	static
+EVMS2.c:91:6:LOGIC_voidControlBrakeLight	8	static
+EVMS2.c:123:6:Error_Action	8	static
+EVMS2.c:105:6:loop	8	static

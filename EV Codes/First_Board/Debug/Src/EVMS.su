@@ -1,0 +1,12 @@
+EVMS.c:40:10:uint16_t_Read_APPS1	0	static
+EVMS.c:59:10:uint16_t_Read_APPS2	0	static
+EVMS.c:103:6:Check_Activasion_Logic	16	static
+EVMS.c:141:6:EVMS_Init	0	static
+EVMS.c:154:6:IDLE_Func	8	static
+EVMS.c:427:6:ErrorAction	0	static
+EVMS.c:80:6:Check_APPS	24	static
+EVMS.c:187:6:PRECHARGE_Func	8	static
+EVMS.c:234:6:NEUTRAL_Func	8	static
+EVMS.c:303:6:DRIVE_Func	16	static
+EVMS.c:349:6:DISCHARGE_Func	8	static
+EVMS.c:391:6:loop	8	static
