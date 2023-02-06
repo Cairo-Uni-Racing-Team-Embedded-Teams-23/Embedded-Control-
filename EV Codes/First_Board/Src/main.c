@@ -97,6 +97,7 @@ int main(void)
 
 	MX_DMA_Init();
 
+
 	MX_ADC1_Init();
 
 	MX_TIM3_Init();
@@ -119,7 +120,7 @@ int main(void)
 	{
 		/* USER CODE END WHILE */
 
-
+		EVMS_Init();
 
 		/* start looping on the different conditions */
 		loop();

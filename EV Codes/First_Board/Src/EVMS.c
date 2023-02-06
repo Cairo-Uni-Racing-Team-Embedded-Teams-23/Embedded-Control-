@@ -126,7 +126,6 @@ void Check_Activasion_Logic()
 		/* wait until the RTD button is released to enter the drive mode */
 		while(HAL_GPIO_ReadPin(RTD_BTN_GPIO_Port,RTD_BTN_Pin));
 
-		/* small delay for button De-Bouncing */
 		HAL_Delay(50);
 
 		/* Enter the drive mode */
@@ -197,7 +196,7 @@ void PRECHARGE_Func()
 	{
 		/* if the pre-charge relay is not closed then the relay or its connection has a problem
 		 * so call the ERROR function */
-		ErrorAction();
+		//ErrorAction();
 	}
 
 	/* Check for the DC90 from bamocar. so that, if it is high then the inverter is pre-charged
@@ -245,19 +244,19 @@ void NEUTRAL_Func()
 	/* if the pre-charge relay is enabled, then the relay or its connection has a problem. So, call ERROR function. */
 	if(HAL_GPIO_ReadPin(PRE_CHARGE_FB_GPIO_Port,PRE_CHARGE_FB_Pin)== 1)
 	{
-		ErrorAction();
+		//ErrorAction();
 	}
 
 	/* if the AIR positive relay is disabled then there is a a problem in the relay or its connection. So, call ERROR function. */
 	if(HAL_GPIO_ReadPin(AIR_POSITIVE_FB_GPIO_Port,AIR_POSITIVE_FB_Pin)==0)
 	{
-		ErrorAction();
+		//ErrorAction();
 	}
 
 	/* if the AIR negative relay is disabled then there is a a problem in the relay or its connection. So, call ERROR function. */
 	if(HAL_GPIO_ReadPin(AIR_NEGATIVE_FB_GPIO_Port,AIR_NEGATIVE_FB_Pin)==0)
 	{
-		ErrorAction();
+		//ErrorAction();
 	}
 
 	/* check the difference between the reading of the two pedals that is less than 10% to avoid any error*/
@@ -321,7 +320,7 @@ void DRIVE_Func()
 	/* if the AIR negative relay is disabled then there is a a problem in the relay or its connection. So, call ERROR function. */
 	if(HAL_GPIO_ReadPin(AIR_NEGATIVE_FB_GPIO_Port,AIR_NEGATIVE_FB_Pin)==0)
 	{
-		ErrorAction();
+		//ErrorAction();
 	}
 
 	/* if the start button is pressed go to discharge state */
@@ -378,13 +377,13 @@ void DISCHARGE_Func()
 	/* if the AIR positive relay is enabled then there is a a problem in the relay or its connection. So, call ERROR function. */
 	if(HAL_GPIO_ReadPin(AIR_POSITIVE_FB_GPIO_Port,AIR_POSITIVE_FB_Pin)==1)
 	{
-		ErrorAction();
+		//ErrorAction();
 	}
 
 	/* if the AIR negative relay is enabled then there is a a problem in the relay or its connection. So, call ERROR function. */
 	if(HAL_GPIO_ReadPin(AIR_NEGATIVE_FB_GPIO_Port,AIR_NEGATIVE_FB_Pin)==1)
 	{
-		ErrorAction();
+		//ErrorAction();
 	}
 
 	/* if DC60 is high then go to IDLE state */
