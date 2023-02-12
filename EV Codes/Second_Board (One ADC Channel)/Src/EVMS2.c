@@ -47,6 +47,8 @@ void EVMS2_init(void)
 	//sprintf(MSG, "%d\r\n", _ADC_BrakesValues[0]);
 	//HAL_UART_Transmit(&huart2, MSG, sizeof(MSG), 100);
 
+	HAL_GPIO_WritePin(EVMS_RELAY_GPIO_Port,EVMS_RELAY_Pin,NOERROR);
+
 }//end FUNC EVMS2_init
 
 /* Name        : ADC_uint16ReadBrakes
@@ -76,7 +78,7 @@ uint16_t ADC_uint16ReadBrakes(void)
  */
 uint8_t LOGIC_uint8CheckIMD()
 {
-	if(HAL_GPIO_ReadPin(IMD_RELAY_FB_GPIO_Port,IMD_RELAY_FB_Pin)!= HAL_GPIO_ReadPin(IMD_FB_GPIO_Port,IMD_FB_Pin))
+	if(HAL_GPIO_ReadPin(IMD_RELAY_FB_GPIO_Port,IMD_RELAY_FB_Pin) != HAL_GPIO_ReadPin(IMD_FB_GPIO_Port,IMD_FB_Pin))
 	{
 		return TRUE ;
 	}//end if 
@@ -125,13 +127,14 @@ uint8_t LOGIC_uint8CheckBSPD()
  */
 uint8_t isError(void)
 {
-	_Error[BSPD_flag] = LOGIC_uint8CheckBSPD();
-	_Error[BMS_flag]  = LOGIC_uint8CheckBMS() ;
+	//_Error[BSPD_flag] = LOGIC_uint8CheckBSPD();
+	//_Error[BMS_flag]  = LOGIC_uint8CheckBMS() ;
 	_Error[IMD_flag]  = LOGIC_uint8CheckIMD() ;
 
-	if( _Error[BSPD_flag] || _Error[BMS_flag]  || _Error[IMD_flag] ) 
+	//if( _Error[BSPD_flag] || _Error[BMS_flag]  || _Error[IMD_flag] )
+	if(_Error[IMD_flag] )
 	{
-		return ERROR; 
+		return ERROR;
 	}//end if 
 
 	return NOERROR;
@@ -172,10 +175,12 @@ void LOGIC_voidControlPump()
 	if(HAL_GPIO_ReadPin(IMD_RELAY_FB_GPIO_Port,IMD_RELAY_FB_Pin) > PUMP_THRESHOLD )
 	{
 		HAL_GPIO_WritePin(PUMP_RELAY_GPIO_Port,PUMP_RELAY_Pin,SET);
+		HAL_GPIO_WritePin(FAN_RELAY_GPIO_Port,FAN_RELAY_Pin,SET);
 	}//end if 
 	else
 	{
 		HAL_GPIO_WritePin(PUMP_RELAY_GPIO_Port,PUMP_RELAY_Pin,RESET);
+		HAL_GPIO_WritePin(FAN_RELAY_GPIO_Port,FAN_RELAY_Pin,RESET);
 	}//end else 
 
 }//end FUNC LOGIC_voidControlPump
@@ -212,6 +217,5 @@ void Error_Action(void)
 	HAL_GPIO_WritePin(EVMS_RELAY_GPIO_Port,EVMS_RELAY_Pin,ERROR);
 
 }//end FUNC Error_Action
-
 
 

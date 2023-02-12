@@ -57,7 +57,7 @@ HAL_ADCEx_Calibration_Start(&hadc1);
     }//end if 
     else
     {
-    	HAL_GPIO_WritePin(BRAKE_LIGHT_RELAY_GPIO_Port,BRAKE_LIGHT_RELAY_Pin,0);
+    	//HAL_GPIO_WritePin(BRAKE_LIGHT_RELAY_GPIO_Port,BRAKE_LIGHT_RELAY_Pin,0);
     }//end else 
 
   }//end while (1)

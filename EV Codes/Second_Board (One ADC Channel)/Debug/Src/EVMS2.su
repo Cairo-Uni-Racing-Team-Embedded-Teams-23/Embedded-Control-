@@ -6,5 +6,5 @@ EVMS2.c:110:9:LOGIC_uint8CheckBSPD	16	static
 EVMS2.c:126:9:isError	8	static
 EVMS2.c:149:6:LOGIC_voidControlFan	8	static
 EVMS2.c:170:6:LOGIC_voidControlPump	8	static
-EVMS2.c:190:6:LOGIC_voidControlBrakeLight	8	static
-EVMS2.c:209:6:Error_Action	8	static
+EVMS2.c:192:6:LOGIC_voidControlBrakeLight	8	static
+EVMS2.c:211:6:Error_Action	8	static
