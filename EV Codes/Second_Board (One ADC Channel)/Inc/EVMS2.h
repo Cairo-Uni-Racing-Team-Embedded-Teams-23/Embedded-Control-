@@ -14,13 +14,13 @@ typedef enum
 
 #define DMA_LENGTH 				2
 #define BRAKES_LIGHT_VALUE 		1
-#define ERROR					0
-#define NOERROR					1
+#define ERROR					1
+#define NOERROR					0
 #define SET                     1
 #define RESET                   0
 #define FAN_THRESHOLD			0
 #define PUMP_THRESHOLD			0
-#define BRAKE_THRESHOLD			3500
+#define BRAKE_THRESHOLD			2482
 #define TRUE                    1
 #define FALSE                   0
 

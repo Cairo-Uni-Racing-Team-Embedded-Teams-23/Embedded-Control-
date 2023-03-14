@@ -110,6 +110,8 @@ void Check_Activasion_Logic()
 
 	/* this while is broken when the rtd button is released before 3 seconds or the brakes
 	 * pedal is released before 3 seconds */
+
+	//value of angle brakes might be change
 	while( (time_difference<3000) && (HAL_GPIO_ReadPin(RTD_BTN_GPIO_Port,RTD_BTN_Pin)) &&  (ADC_values[BRAKE_ANGLE]>VAL_BRAKE_ANGLE_RTD) )
 	{
 		time_difference=HAL_GetTick()-time_on_press;
@@ -207,7 +209,8 @@ void PRECHARGE_Func()
 		/* enter the neutral state */
 		nextStateM=NEUTRAL;
 
-																												//hnzbtha 3la 7sb ana bigely 95% emta
+																    //hnzbtha 3la 7sb ana bigely 95% emta
+																	//htt7l mn el inverter nafso
 		HAL_Delay(30);
 
 	}
@@ -232,11 +235,13 @@ void PRECHARGE_Func()
  */
 void NEUTRAL_Func()
 {
-	/* Disable the pre-charge relay, as the inverter is charged now */
-	HAL_GPIO_WritePin(PRECHARGE_RELAY_GPIO_Port,PRECHARGE_RELAY_Pin,0);
-
 	/* Enable the AIR positive relay */
 	HAL_GPIO_WritePin(AIR_POSITIVE_GPIO_Port,AIR_POSITIVE_Pin,1);
+
+	HAL_Delay(50);
+
+	/* Disable the pre-charge relay, as the inverter is charged now */
+	HAL_GPIO_WritePin(PRECHARGE_RELAY_GPIO_Port,PRECHARGE_RELAY_Pin,0);
 
 	/* A delay to make sure that the relays had time to act */
 	HAL_Delay(50);
@@ -311,8 +316,9 @@ void DRIVE_Func()
 	/* variable to store the average of the first pedal reading */
 	uint16_t APPS_READ=uint16_t_Read_APPS1();
 
-																														//MAPS THA ADC READ TO PWM OUTPUT VALUE
-																														//APPS_READ=map(APPS_READ,0,4095,0,PWM_MAX_OUTPUT);
+	//MAPS The ADC READ TO PWM OUTPUT VALUE
+	APPS_READ=map(APPS_READ,2000,4095,PWM_MAX_OUTPUT,0);
+
 	/* Output the torque command as PWM
 	 * where value in ARR register = 5000*/
 	TIM3->CCR3 = APPS_READ;
@@ -387,7 +393,7 @@ void DISCHARGE_Func()
 	}
 
 	/* if DC60 is high then go to IDLE state */
-	if(HAL_GPIO_ReadPin(DC60_INPUT_GPIO_Port,DC60_INPUT_Pin)==1)																				 /*will be re-configured*/
+	if((!HAL_GPIO_ReadPin(AIR_NEGATIVE_FB_GPIO_Port,AIR_NEGATIVE_FB_Pin)) && (!HAL_GPIO_ReadPin(AIR_POSITIVE_FB_GPIO_Port,AIR_POSITIVE_FB_Pin)))																				 /*will be re-configured*/
 	{
 		/* enter the IDLE state */
 		nextStateM=IDLE;
@@ -450,6 +456,13 @@ void ErrorAction()
 {
 	/* open the shutdown circuit and go in infinite loop */
 	HAL_GPIO_WritePin(EVMS_RELAY_GPIO_Port,EVMS_RELAY_Pin,1);
+	HAL_Delay(2000);
+	HAL_GPIO_WritePin(EVMS_RELAY_GPIO_Port,EVMS_RELAY_Pin,0);
+	HAL_Delay(2000);
+	HAL_GPIO_WritePin(EVMS_RELAY_GPIO_Port,EVMS_RELAY_Pin,1);
+
+	/* enter the discharge state */
+	nextStateM=DISCHARGE;
 
 	//	while(1){
 	//

@@ -127,8 +127,8 @@ uint8_t LOGIC_uint8CheckBSPD()
  */
 uint8_t isError(void)
 {
-	//_Error[BSPD_flag] = LOGIC_uint8CheckBSPD();
-	//_Error[BMS_flag]  = LOGIC_uint8CheckBMS() ;
+	_Error[BSPD_flag] = LOGIC_uint8CheckBSPD();
+	_Error[BMS_flag]  = LOGIC_uint8CheckBMS() ;
 	_Error[IMD_flag]  = LOGIC_uint8CheckIMD() ;
 
 	//if( _Error[BSPD_flag] || _Error[BMS_flag]  || _Error[IMD_flag] )
@@ -172,8 +172,9 @@ void LOGIC_voidControlFan()
  */
 void LOGIC_voidControlPump()
 {
-	if(HAL_GPIO_ReadPin(IMD_RELAY_FB_GPIO_Port,IMD_RELAY_FB_Pin) > PUMP_THRESHOLD )
+	if(HAL_GPIO_ReadPin(IMD_RELAY_FB_GPIO_Port,IMD_RELAY_FB_Pin) || HAL_GPIO_ReadPin(BMS_FB_GPIO_Port,BMS_FB_Pin) )
 	{
+		// hnt7km fyha 3la 7sb el reading mn temperature mn el CAN
 		HAL_GPIO_WritePin(PUMP_RELAY_GPIO_Port,PUMP_RELAY_Pin,SET);
 		HAL_GPIO_WritePin(FAN_RELAY_GPIO_Port,FAN_RELAY_Pin,SET);
 	}//end if 
@@ -194,7 +195,7 @@ void LOGIC_voidControlPump()
  */
 void LOGIC_voidControlBrakeLight()
 {
-	//HAL_GPIO_WritePin(BRAKE_LIGHT_RELAY_GPIO_Port,BRAKE_LIGHT_RELAY_Pin,SET);
+	HAL_GPIO_WritePin(BRAKE_LIGHT_RELAY_GPIO_Port,BRAKE_LIGHT_RELAY_Pin,RESET);
 
 	if(ADC_uint16ReadBrakes() >= BRAKE_THRESHOLD) //
 	{
@@ -214,6 +215,10 @@ void LOGIC_voidControlBrakeLight()
 void Error_Action(void)
 {
 	//It's not sure that ERROR value == 0 or 1
+	HAL_GPIO_WritePin(EVMS_RELAY_GPIO_Port,EVMS_RELAY_Pin,ERROR);
+	HAL_Delay(2000);
+	HAL_GPIO_WritePin(EVMS_RELAY_GPIO_Port,EVMS_RELAY_Pin,NOERROR);
+	HAL_Delay(2000);
 	HAL_GPIO_WritePin(EVMS_RELAY_GPIO_Port,EVMS_RELAY_Pin,ERROR);
 
 }//end FUNC Error_Action
