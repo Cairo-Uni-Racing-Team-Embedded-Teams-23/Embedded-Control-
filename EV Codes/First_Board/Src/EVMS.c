@@ -14,6 +14,7 @@ Modes_enum nextStateM = IDLE;
 Error_enum currStateE = NOERROR;
 Error_enum nextStateE = NOERROR;
 
+Type_Error_enum errorType = NO_TYPE_ERROR;
 
 /***************************************************************************
  *								Global Variables						   *
@@ -27,7 +28,7 @@ uint16_t ADC_values[3];
 /* Declaring an array to store a massage to be sent by the UART
  * ex: "Value of 0 = 5000 , Value of 1 = 6000"
  * */
-char UART_massage[50];
+char UART_massage;
 
 
 /***************************************************************************
@@ -91,8 +92,10 @@ void Check_APPS()
 		difference =apps2_read-apps1_read;
 
 	/* handle the error if the difference is greater than 10% */
-	if(difference> 0.1* apps2_read || difference> 0.1* apps1_read)
+	if(difference> 0.1* apps2_read || difference> 0.1* apps1_read){
+		errorType = ERROR_CheckAPPS;
 		ErrorAction();
+	}
 }
 
 /* Description:
@@ -198,6 +201,7 @@ void PRECHARGE_Func()
 	{
 		/* if the pre-charge relay is not closed then the relay or its connection has a problem
 		 * so call the ERROR function */
+		errorType = ERROR_PrechargeFB;
 		//ErrorAction();
 	}
 
@@ -249,18 +253,21 @@ void NEUTRAL_Func()
 	/* if the pre-charge relay is enabled, then the relay or its connection has a problem. So, call ERROR function. */
 	if(HAL_GPIO_ReadPin(PRE_CHARGE_FB_GPIO_Port,PRE_CHARGE_FB_Pin)== 1)
 	{
+		errorType = ERROR_PrechargeFB;
 		//ErrorAction();
 	}
 
 	/* if the AIR positive relay is disabled then there is a a problem in the relay or its connection. So, call ERROR function. */
 	if(HAL_GPIO_ReadPin(AIR_POSITIVE_FB_GPIO_Port,AIR_POSITIVE_FB_Pin)==0)
 	{
+		errorType = ERROR_AIRposFB;
 		//ErrorAction();
 	}
 
 	/* if the AIR negative relay is disabled then there is a a problem in the relay or its connection. So, call ERROR function. */
 	if(HAL_GPIO_ReadPin(AIR_NEGATIVE_FB_GPIO_Port,AIR_NEGATIVE_FB_Pin)==0)
 	{
+		errorType = ERROR_AIRnegFB;
 		//ErrorAction();
 	}
 
@@ -319,13 +326,22 @@ void DRIVE_Func()
 	//MAPS The ADC READ TO PWM OUTPUT VALUE
 	APPS_READ=map(APPS_READ,2000,4095,PWM_MAX_OUTPUT,0);
 
+
 	/* Output the torque command as PWM
 	 * where value in ARR register = 5000*/
 	TIM3->CCR3 = APPS_READ;
 
+	/* Store the updated ADC values of the two pedals in a string */
+	sprintf(UART_massage, "%c \n", "D");
+	/* Transmit the message by the UART*/
+	HAL_UART_Transmit(&huart3, UART_massage, sizeof(UART_massage), 1);
+
+	HAL_UART_Transmit(&huart3, APPS_READ, sizeof(APPS_READ), 1);
+
 	/* if the AIR negative relay is disabled then there is a a problem in the relay or its connection. So, call ERROR function. */
 	if(HAL_GPIO_ReadPin(AIR_NEGATIVE_FB_GPIO_Port,AIR_NEGATIVE_FB_Pin)==0)
 	{
+		errorType = ERROR_AIRnegFB;
 		//ErrorAction();
 	}
 
@@ -383,12 +399,14 @@ void DISCHARGE_Func()
 	/* if the AIR positive relay is enabled then there is a a problem in the relay or its connection. So, call ERROR function. */
 	if(HAL_GPIO_ReadPin(AIR_POSITIVE_FB_GPIO_Port,AIR_POSITIVE_FB_Pin)==1)
 	{
+		errorType = ERROR_AIRposFB;
 		//ErrorAction();
 	}
 
 	/* if the AIR negative relay is enabled then there is a a problem in the relay or its connection. So, call ERROR function. */
 	if(HAL_GPIO_ReadPin(AIR_NEGATIVE_FB_GPIO_Port,AIR_NEGATIVE_FB_Pin)==1)
 	{
+		errorType = ERROR_AIRnegFB;
 		//ErrorAction();
 	}
 
@@ -417,10 +435,12 @@ void DISCHARGE_Func()
 void loop()
 {
 	/* Store the updated ADC values of the two pedals in a string */
-	sprintf(UART_massage, "%d \n", ADC_values[2]);
-
+	//sprintf(UART_massage, "%d\n", "S");
 	/* Transmit the message by the UART*/
-	HAL_UART_Transmit(&huart3, UART_massage, sizeof(UART_massage), 50);
+	//HAL_UART_Transmit(&huart3, UART_massage, sizeof(UART_massage), 1);
+	sprintf(UART_massage, "%d\n", currStateM);
+	HAL_UART_Transmit(&huart3, UART_massage, sizeof(UART_massage), 1);
+
 
 	/* Go to the required state depending on the value in the current state */
 	switch(currStateM)
@@ -464,7 +484,12 @@ void ErrorAction()
 	/* enter the discharge state */
 	nextStateM=DISCHARGE;
 
-	//	while(1){
-	//
-	//	}
+	/* Store the updated ADC values of the two pedals in a string */
+	sprintf(UART_massage, "%c \n", "E");
+	/* Transmit the message by the UART*/
+	HAL_UART_Transmit(&huart3, UART_massage, sizeof(UART_massage), 1);
+	sprintf(UART_massage, "%d \n", errorType);
+		/* Transmit the message by the UART*/
+		HAL_UART_Transmit(&huart3, UART_massage, sizeof(UART_massage), 1);
+	while(errorType){}
 }

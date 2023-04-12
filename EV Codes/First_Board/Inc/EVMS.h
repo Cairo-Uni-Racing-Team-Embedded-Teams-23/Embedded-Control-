@@ -33,6 +33,14 @@ NOERROR,
 FATAL
 }Error_enum;
 
+typedef enum
+{
+	NO_TYPE_ERROR,
+	ERROR_CheckAPPS,
+	ERROR_PrechargeFB,
+	ERROR_AIRposFB,
+	ERROR_AIRnegFB
+}Type_Error_enum;
 
 /***************************************************************************
  *							Functions prototypes     	                   *
